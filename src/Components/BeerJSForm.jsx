@@ -2,9 +2,29 @@ import React from "react";
 import "../Components/beerJSForm.css";
 import beerJSLogo from "../img/BeerJSLogo.jpg";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup
+  .object({
+    firstName: yup.string().required("Це поле є обов'язковим"),
+    contacts: yup
+      .string()
+      .matches(/^[0-9]+$/, "Контакт повинен містити тільки цифри")
+      .required("Це поле є обов'язковим"),
+    format: yup.string().required("Це поле є обов'язковим"),
+    subject: yup.string().required("Це поле є обов'язковим"),
+  })
+  .required();
 
 function BeerJSForm() {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
   const onSubmit = (data) => console.log(data);
 
   return (
@@ -40,6 +60,7 @@ function BeerJSForm() {
               placeholder="Ваша відповідь"
               {...register("firstName")}
             />
+            <p className="error">{errors.firstName?.message}</p>
           </div>
 
           <div className="form-group">
@@ -52,9 +73,7 @@ function BeerJSForm() {
               placeholder="Ваша відповідь"
               {...register("contacts")}
             />
-            <p className="error-message">
-              Відповідь на це запитання обов'язкова
-            </p>
+            <p className="error">{errors.contacts?.message}</p>
           </div>
 
           <div className="form-group">
@@ -68,9 +87,7 @@ function BeerJSForm() {
               required
               {...register("format")}
             />
-            <p className="error-message">
-              Відповідь на це запитання обов'язкова
-            </p>
+            <p className="error">{errors.format?.message}</p>
           </div>
 
           <div className="form-group">
@@ -84,9 +101,7 @@ function BeerJSForm() {
               required
               {...register("subject")}
             />
-            <p className="error-message">
-              Відповідь на це запитання обов'язкова
-            </p>
+            <p className="error">{errors.subject?.message}</p>
           </div>
 
           <div className="form-group">
